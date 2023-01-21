@@ -1,6 +1,7 @@
 <?php
 use DMK\MkMailer\Model\Template;
 use Sys25\RnBase\Domain\Model\DataInterface;
+use Sys25\RnBase\Domain\Model\DataModel;
 use Sys25\RnBase\Frontend\Marker\SimpleMarker;
 use Sys25\RnBase\Frontend\Marker\Templates;
 use Sys25\RnBase\Utility\Debug;
