@@ -1,6 +1,9 @@
 <?php
+use DMK\MkMailer\Model\Template;
 use Sys25\RnBase\Domain\Model\DataInterface;
+use Sys25\RnBase\Frontend\Marker\SimpleMarker;
 use Sys25\RnBase\Frontend\Marker\Templates;
+use Sys25\RnBase\Utility\Debug;
 /***************************************************************
  * Copyright notice
  *
@@ -51,7 +54,7 @@ class tx_mkforms_dh_mail_Main extends formidable_maindatahandler
 
         // wir erzeugen keine E-Mail, nur den debug!
         if ($this->defaultFalse('/debugdata')) {
-            \Sys25\RnBase\Utility\Debug::debug($data, 'Flatten Data for Model:');
+            Debug::debug($data, 'Flatten Data for Model:');
 
             return;
         }
@@ -134,7 +137,7 @@ class tx_mkforms_dh_mail_Main extends formidable_maindatahandler
         if ($class) {
             $class = $this->getForm()->getRunnable()->callRunnable($class);
         } else {
-            $class = \Sys25\RnBase\Domain\Model\DataModel::class;
+            $class = DataModel::class;
         }
 
         return tx_rnbase::makeInstance($class, $record);
@@ -202,12 +205,12 @@ class tx_mkforms_dh_mail_Main extends formidable_maindatahandler
      *
      * @TODO: add own model/interface, currently the template model from mkmailer is used.
      *
-     * @return tx_mkmailer_models_Template
+     * @return Template
      */
     private function getTemplateObject()
     {
         $templateObj = $this->buildTemplateObject();
-        if ($templateObj instanceof tx_mkmailer_models_Template) {
+        if ($templateObj instanceof Template) {
             return $templateObj;
         }
 
@@ -250,13 +253,13 @@ class tx_mkforms_dh_mail_Main extends formidable_maindatahandler
     /**
      * Builds a teplate object by xml config.
      *
-     * @return tx_mkmailer_models_Template
+     * @return Template
      */
     private function buildTemplateObject()
     {
-        /* @var $templateObj tx_mkmailer_models_Template */
+        /* @var $templateObj Template */
         $templateObj = tx_rnbase::makeInstance(
-            tx_mkmailer_models_Template::class
+            Template::class
         );
 
         // set the contents
@@ -365,13 +368,11 @@ class tx_mkforms_dh_mail_Main extends formidable_maindatahandler
     /**
      * Parses the content of the mail.
      *
-     * @param object                               $content With setter for subject contenttext, contenthtml
-     * @param \Sys25\RnBase\Domain\Model\DataInterface $model
+     * @param object $content With setter for subject contenttext, contenthtml
+     * @param DataInterface $model
      */
-    protected function parseMail(
-        $content,
-        Sys25\RnBase\Domain\Model\DataInterface $model
-    ) {
+    protected function parseMail($content, DataInterface $model)
+    {
         // Die Daten in die E-Mail Rendern.
         foreach ([
             'subject',
@@ -398,19 +399,17 @@ class tx_mkforms_dh_mail_Main extends formidable_maindatahandler
     /**
      * Parses the data into the content.
      *
-     * @param string                               $content
-     * @param \Sys25\RnBase\Domain\Model\DataInterface $model
-     * @param string                               $fieldId
+     * @param string $content
+     * @param DataInterface $model
+     * @param string $fieldId
      *
      * @return string
      */
-    protected function parseContent(
-        $content,
-        Sys25\RnBase\Domain\Model\DataInterface $model,
-        $fieldId = ''
-    ) {
+    protected function parseContent($content, DataInterface $model, $fieldId = '')
+    {
         // @TODO: make marker class configurable
-        $markerClass = tx_rnbase::makeInstance(\Sys25\RnBase\Frontend\Marker\SimpleMarker::class);
+        /** @var SimpleMarker $markerClass */
+        $markerClass = tx_rnbase::makeInstance(SimpleMarker::class);
         $formatter = $this->getForm()->getConfigurations()->getFormatter();
 
         $itemName = $this->getConfigValue('/mkmailer/itemname');
